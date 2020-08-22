@@ -3,6 +3,7 @@ README.md
 setup.cfg
 setup.py
 docs/man/labelme.1
+enhancedlabelme/README.md
 enhancedlabelme/__init__.py
 enhancedlabelme/__main__.py
 enhancedlabelme/app.py
@@ -42,6 +43,7 @@ enhancedlabelme/icons/file.png
 enhancedlabelme/icons/fit-width.png
 enhancedlabelme/icons/fit-window.png
 enhancedlabelme/icons/fit.png
+enhancedlabelme/icons/focus.png
 enhancedlabelme/icons/help.png
 enhancedlabelme/icons/icon.icns
 enhancedlabelme/icons/icon.ico
@@ -65,6 +67,7 @@ enhancedlabelme/icons/update.png
 enhancedlabelme/icons/zoom-in.png
 enhancedlabelme/icons/zoom-out.png
 enhancedlabelme/icons/zoom.png
+enhancedlabelme/ui/penstylewindow.ui
 enhancedlabelme/utils/__init__.py
 enhancedlabelme/utils/_io.py
 enhancedlabelme/utils/image.py

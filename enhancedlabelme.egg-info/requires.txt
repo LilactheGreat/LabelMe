@@ -6,4 +6,7 @@ PyYAML
 qtpy
 termcolor
 QDarkStyle>=2.8.1
-urllib5
+pynput
+colorama
+requests
+PyQt5>=5.15.0

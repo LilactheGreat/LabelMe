@@ -36,6 +36,10 @@ def get_install_requires():
         "qtpy",
         "termcolor",
         'QDarkStyle>=2.8.1',
+        'pynput',
+        "colorama",
+        "requests",
+        "PyQt5>=5.15.0",
     ]
 
     # Find python binding for qt with priority:
@@ -136,7 +140,7 @@ def main():
             'Programming Language :: Python :: Implementation :: CPython',
             'Programming Language :: Python :: Implementation :: PyPy',
         ],
-        package_data={'enhancedlabelme': ['icons/*', 'config/*.yaml']},
+        package_data={'enhancedlabelme': ['icons/*', 'config/*.yaml', 'ui/*', '*.md']},
         entry_points={
             'console_scripts': [
                 'labelme+=enhancedlabelme.__main__:main',

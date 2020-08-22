@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: enhancedlabelme
-Version: 1.2.3
+Version: 1.6.1
 Summary: Image Polygonal Annotation with Python
 Home-page: https://github.com/wkentaro/labelme
 Author: Kentaro Wada
@@ -97,9 +97,27 @@ Description: EnhancedLabelMe
         - Fixed crash when double clicking item in Polygon Labels
         - Added checking available update function in help menu bar
         
+        v1.3
+        - Now you can configure the style of cross hair (view - Cross-line Style)
+        
+        v1.4
+        - Fixed unintentionally deleteing Polygon Labels during drag & drop
+        
+        v1.5
+        - Added immersive mode which hides entire polygons except current creating polygon (view - Immersive Mode)
+          ** IMPORTANT!!! ***
+          : To enable, please add follow line to shortcuts section in config file
+          > show_polygon: Ctrl+2
+        
+        v1.6
+        - You can not toggle immersive mode while creating polygon anymore to prevent unexpected error
+        - Now the labelme application will be scaled based on the dpi of your screen
+          (4K User is always welcome)
+        
         * To Do
         - drag & drop folder
         - Enable deleting elements from label list
+        - Use Qimage instead of Qpainter/QPixmap
         
         
         @misc{labelme2016,
