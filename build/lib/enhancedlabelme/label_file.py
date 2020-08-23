@@ -21,17 +21,6 @@ from datetime import datetime
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
-# @contextlib.contextmanager
-# def open(name, mode):
-#     assert mode in ["r", "w"]
-#     if PY2:
-#         mode += "b"
-#         encoding = None
-#     else:
-#         encoding = "utf-8"
-#     yield io.open(name, mode, encoding=encoding)
-#     return
-
 
 class LabelFileError(Exception):
     pass

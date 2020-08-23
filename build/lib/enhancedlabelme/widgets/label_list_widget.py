@@ -19,6 +19,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
         self.initStyleOption(options, index)
         self.doc.setHtml(options.text)
+        self.doc.setTextWidth(option.rect.width())
         options.text = ""
 
         style = (
@@ -48,11 +49,11 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         if index.column() != 0:
             textRect.adjust(5, 0, 0, 0)
 
-        thefuckyourshitup_constant = 4
+        temp_constant = 4
         margin = (option.rect.height() - options.fontMetrics.height()) // 2
-        margin = margin - thefuckyourshitup_constant
+        margin = margin - temp_constant
         textRect.setTop(textRect.top() + margin)
-
+        
         painter.translate(textRect.topLeft())
         painter.setClipRect(textRect.translated(-textRect.topLeft()))
         self.doc.documentLayout().draw(painter, ctx)
@@ -60,10 +61,10 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         painter.restore()
 
     def sizeHint(self, option, index):
-        thefuckyourshitup_constant = 4
+        temp_constant = 4
         return QtCore.QSize(
             self.doc.idealWidth(),
-            self.doc.size().height() - thefuckyourshitup_constant,
+            self.doc.size().height() - temp_constant,
         )
 
 
@@ -72,7 +73,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         super(LabelListWidgetItem, self).__init__()
         self.setText(text)
         self.setShape(shape)
-
+        self.setFlags(self.flags() & ~QtCore.Qt.ItemIsDropEnabled)
         self.setCheckable(True)
         self.setCheckState(Qt.Checked)
         self.setEditable(False)
@@ -103,7 +104,6 @@ class StandardItemModel(QtGui.QStandardItemModel):
         self.itemDropped.emit()
         return ret
 
-
 class LabelListWidget(QtWidgets.QListView):
 
     itemDoubleClicked = QtCore.Signal(LabelListWidgetItem)
@@ -112,7 +112,7 @@ class LabelListWidget(QtWidgets.QListView):
     def __init__(self):
         super(LabelListWidget, self).__init__()
         self._selectedItems = []
-
+        
         self.setWindowFlags(Qt.Window)
         self.setModel(StandardItemModel())
         self.model().setItemPrototype(LabelListWidgetItem())
@@ -120,11 +120,11 @@ class LabelListWidget(QtWidgets.QListView):
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.setDefaultDropAction(Qt.MoveAction)
-
         self.doubleClicked.connect(self.itemDoubleClickedEvent)
         self.selectionModel().selectionChanged.connect(
             self.itemSelectionChangedEvent
         )
+        self.setAlternatingRowColors(True)
 
     def __len__(self):
         return self.model().rowCount()

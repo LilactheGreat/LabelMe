@@ -7,6 +7,7 @@ import sys
 import yaml
 import qdarkstyle
 
+import qtpy
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -16,6 +17,8 @@ from enhancedlabelme.app import MainWindow
 from enhancedlabelme.config import get_config
 from enhancedlabelme.logger import logger
 from enhancedlabelme.utils import newIcon
+
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 def main():
     os.environ['QT_API'] = 'pyqt5'
@@ -190,11 +193,17 @@ def main():
         QtCore.QLocale.system().name(),
         osp.dirname(osp.abspath(__file__)) + '/translate'
     )
+    
+    # Application will be scaled based on dpi of screen
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    
     app = QtWidgets.QApplication(sys.argv)
+    # app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon('icon'))
     app.installTranslator(translator)
-    
+
     if hasattr(args, 'dark_mode') or config['dark_mode']:
         app.setStyleSheet(qdarkstyle.load_stylesheet())
         

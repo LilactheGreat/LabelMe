@@ -75,6 +75,7 @@ enhancedlabelme/utils/qt.py
 enhancedlabelme/utils/shape.py
 enhancedlabelme/widgets/__init__.py
 enhancedlabelme/widgets/brightness_contrast_dialog.py
+enhancedlabelme/widgets/canvas - 복사본.py
 enhancedlabelme/widgets/canvas.py
 enhancedlabelme/widgets/color_dialog.py
 enhancedlabelme/widgets/escapable_qlist_widget.py

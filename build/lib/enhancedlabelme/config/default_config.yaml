@@ -1,6 +1,7 @@
 dark_mode: false    # Dark Theme
 auto_save: true   # Auto save
 cross_hair: false   # Cross hair
+hide_others: false  # Imerssive mode
 display_label_popup: true
 instance_label_auto_increment: true
 store_data: true
@@ -94,3 +95,4 @@ shortcuts:
   toggle_keep_prev_mode: Ctrl+P
 
   cross_hair: Ctrl+1
+  show_polygon: Ctrl+2

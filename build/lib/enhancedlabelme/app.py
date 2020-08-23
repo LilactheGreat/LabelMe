@@ -8,13 +8,14 @@ import platform
 import qdarkstyle
 import requests
 import math
-import base64
 import imgviz
+import sys
 
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
+from qtpy import uic
 
 from itertools import zip_longest
 
@@ -33,7 +34,6 @@ from enhancedlabelme.logger import logger
 from enhancedlabelme.shape import Shape
 from enhancedlabelme.widgets import BrightnessContrastDialog
 from enhancedlabelme.widgets import Canvas
-from enhancedlabelme.widgets import ColorDialog
 from enhancedlabelme.widgets import LabelDialog
 from enhancedlabelme.widgets import LabelListWidget
 from enhancedlabelme.widgets import LabelListWidgetItem
@@ -55,6 +55,125 @@ from enhancedlabelme.widgets import ZoomWidget
 LABEL_COLORMAP = imgviz.label_colormap(value=200)
 os.environ['QT_API'] = 'pyqt5'
 
+class PenStyleWindow(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(PenStyleWindow, self).__init__(parent)
+        self.penColor = parent.canvas.penColor
+        self.penThickness = parent.canvas.penThickness
+        self.penStyle = parent.canvas.penStyle
+        
+        # Import .ui forms for the GUI using function resource_path()
+        # self.penOptionForm = self.resource_path("enhancedlabelme/ui/penstylewindow.ui")
+        self.initUI(parent)
+
+    # Define function to import external files when using PyInstaller.
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = osp.abspath(".")
+
+        return osp.join(base_path, relative_path)
+
+
+    def initUI(self, parent):
+        option_ui = osp.join(osp.dirname(osp.realpath(__file__)), 'ui/penstylewindow.ui')
+        uic.loadUi(option_ui, self)
+        # uic.loadUi(self.penOptionForm, self)
+        
+        # Load current style
+        self.horizontalSlider_thickness.setSliderPosition(self.penThickness * 10)
+        
+        if self.penColor == QtCore.Qt.black:
+            self.comboBox_color.setCurrentIndex(0)
+        elif self.penColor == QtCore.Qt.white:
+            self.comboBox_color.setCurrentIndex(1)
+        elif self.penColor == QtCore.Qt.gray:
+            self.comboBox_color.setCurrentIndex(2)
+        elif self.penColor == QtCore.Qt.red:
+            self.comboBox_color.setCurrentIndex(3)
+        elif self.penColor == QtCore.Qt.yellow:
+            self.comboBox_color.setCurrentIndex(4)
+        elif self.penColor == QtCore.Qt.green:
+            self.comboBox_color.setCurrentIndex(5)
+        elif self.penColor == QtCore.Qt.blue:
+            self.comboBox_color.setCurrentIndex(6)
+        elif self.penColor == QtCore.Qt.cyan:
+            self.comboBox_color.setCurrentIndex(7)
+        elif self.penColor == QtCore.Qt.magenta:
+            self.comboBox_color.setCurrentIndex(8)        
+        
+        if self.penStyle == QtCore.Qt.SolidLine:
+            self.comboBox_shape.setCurrentIndex(0)
+        elif self.penStyle == QtCore.Qt.DashLine:
+            self.comboBox_shape.setCurrentIndex(1)
+        elif self.penStyle == QtCore.Qt.DotLine:
+            self.comboBox_shape.setCurrentIndex(2)     
+        
+        self.comboBox_shape.activated[str].connect(self.saveShape)
+        self.comboBox_color.activated[str].connect(self.saveColor)
+        self.horizontalSlider_thickness.valueChanged.connect(self.saveThickness)
+        self.buttonBox_cross.accepted.connect(functools.partial(self.saveSettings, parent))
+        self.setWindowTitle('Cross-line Style Configuration')
+        self.show()
+        
+    def paintEvent(self, event):
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        self.drawLines(qp)
+        qp.end()
+        
+    def drawLines(self, qp):
+        pen = QtGui.QPen(self.penColor, self.penThickness, self.penStyle)
+        qp.setPen(pen)
+        qp.drawLine(50, 170, 250, 170)
+        
+    def saveShape(self, value):
+        if value == 'SolidLine':
+            self.penStyle = QtCore.Qt.SolidLine
+        elif value == 'DashLine':
+            self.penStyle = QtCore.Qt.DashLine
+        elif value == 'DotLine':
+            self.penStyle = QtCore.Qt.DotLine
+        self.repaint()
+        
+    def saveColor(self, value):
+        if value == 'Black':
+            self.penColor = QtCore.Qt.black
+        elif value == 'White':
+            self.penColor = QtCore.Qt.white
+        elif value == 'gray':
+            self.penColor = QtCore.Qt.gray
+        elif value == 'Red':
+            self.penColor = QtCore.Qt.red
+        elif value == 'Yellow':
+            self.penColor = QtCore.Qt.yellow
+        elif value == 'Green':
+            self.penColor = QtCore.Qt.green
+        elif value == 'Blue':
+            self.penColor = QtCore.Qt.blue
+        elif value == 'Cyan':
+            self.penColor = QtCore.Qt.cyan
+        elif value == 'Pink':
+            self.penColor = QtCore.Qt.magenta
+        self.repaint()
+        
+    def saveThickness(self, value):
+        value = float(value / 10)
+        self.penThickness = value
+        self.repaint()
+    
+    def saveSettings(self, parent):
+        parent.canvas.penColor = self.penColor
+        parent.canvas.penThickness = self.penThickness 
+        parent.canvas.penStyle = self.penStyle
+        with open(osp.join(osp.dirname(osp.realpath(__file__)), 'widgets/crossSave.txt'), 'w', encoding='utf-8') as f:
+            f.write(str(self.penStyle)+'\n')
+            f.write(str(self.penThickness)+'\n')
+            f.write(str(self.penColor)+'\n')    
+        
 class MainWindow(QtWidgets.QMainWindow):
 
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
@@ -113,21 +232,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
+
+
+
         #self.labelList.itemActivated.connect(self.labelSelectionChanged)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemDropped.connect(self.labelOrderChanged)
-        #self.labelList.setDragDropMode(
-        #    QtWidgets.QAbstractItemView.InternalMove)
-        #self.labelList.setParent(self)
+        self.labelList.setDragDropMode(
+           QtWidgets.QAbstractItemView.InternalMove)
+        self.labelList.setParent(self)
         self.shape_dock = QtWidgets.QDockWidget(
             self.tr('Polygon Labels'),
             self
         )
         self.shape_dock.setObjectName('Labels')
         self.shape_dock.setWidget(self.labelList)
+
+
+
 
         self.uniqLabelList = UniqueLabelQListWidget()
         self.uniqLabelList.setToolTip(self.tr(
@@ -166,7 +291,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
-        self.colorDialog = ColorDialog(parent=self)
 
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config['epsilon'],
@@ -373,15 +497,18 @@ class MainWindow(QtWidgets.QMainWindow):
                       self.tr('Undo last add and edit of shape'),
                       enabled=False)
 
-        hideAll = action(self.tr('&Hide\nPolygons'),
-                         functools.partial(self.togglePolygons, False),
-                         icon='eye', tip=self.tr('Hide all polygons'),
-                         enabled=False)
-        showAll = action(self.tr('&Show\nPolygons'),
-                         functools.partial(self.togglePolygons, True),
+        showAll = action(self.tr('&Hide/Show\nPolygons'),
+                         functools.partial(self.togglePolygons, 0, False),
+                         shortcuts['show_polygon'], checkable=True,
                          icon='eye', tip=self.tr('Show all polygons'),
-                         enabled=False)
+                         enabled=True)
 
+        hideOthers = action(self.tr('&Immersive mode'),
+                            self.immersiveMode,
+                            icon='focus', tip=self.tr('Hide other polygons when creating polygon'),
+                            checkable=True, checked=self._config['hide_others'], enabled=True)
+        hideOthers.setChecked(self._config['hide_others'])
+        
         help = action(self.tr('&About'), self.about, icon='help',
                       tip=self.tr('About EnhancedLabelMe'))
         
@@ -444,6 +571,9 @@ class MainWindow(QtWidgets.QMainWindow):
                            tip=self.tr('Show cross hair around the mouse cursor'),
                            checkable=True, checked=self._config['cross_hair'],)
         crossHair.setChecked(self._config['cross_hair'])
+        crossStyle = action(self.tr('&Customize Cross-line Style'), self.crossStyleSetting,
+                             icon='edit', tip=self.tr(u'Configure Cross-line Style'))
+
         darkMode = action(self.tr('&Dark Theme'), self.darkModeToggle, icon='dark',
                 tip=self.tr('Toggle dark theme'), checkable=True, checked=self._config['dark_mode'],)
 
@@ -513,7 +643,10 @@ class MainWindow(QtWidgets.QMainWindow):
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
             crossHair=crossHair,
+            crossStyle=crossStyle,
             darkMode=darkMode,
+            hideOthers=hideOthers,
+            showAll=showAll,
             # XXX: need to add some actions here to activate the shortcut
             editMenu=(
                 edit,
@@ -555,7 +688,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 brightnessContrast,
             ),
-            onShapesPresent=(saveAs, hideAll, showAll),
+            onShapesPresent=(saveAs, showAll),
         )
 
         self.canvas.edgeSelected.connect(self.canvasShapeEdgeSelected)
@@ -603,11 +736,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.file_dock.toggleViewAction(),
                 None,
                 crossHair,
+                crossStyle,
                 None,
                 fill_drawing,
                 None,
-                hideAll,
                 showAll,
+                hideOthers,
                 None,
                 zoomIn,
                 zoomOut,
@@ -869,14 +1003,18 @@ class MainWindow(QtWidgets.QMainWindow):
         return QtWidgets.QMessageBox.about(
             self, 'About', '\n<Version %s>\n%s'%(__version__, "Modified by LilactheGreat"))
         
+    def crossStyleSetting(self):
+        psw = PenStyleWindow(self)
+        #self.canvas.penStyle, self.canvas.penThickness, self.canvas.penColor = psw.saveSettings(self)
+        
     def readme(self):
         import platform, subprocess
         if platform.system() == 'Darwin':       # macOS
-            subprocess.call(('open', 'README.md'))
+            subprocess.call(('open', osp.join(osp.dirname(osp.realpath(__file__)), 'README.md')))
         elif platform.system() == 'Windows':    # Windows
-            subprocess.call(('notepad.exe', 'README.md'))
+            subprocess.call(('notepad.exe', osp.join(osp.dirname(osp.realpath(__file__)), 'README.md')))
         else:                                   # linux variants
-            subprocess.call(('xdg-open', 'README.md'))
+            subprocess.call(('xdg-open', osp.join(osp.dirname(osp.realpath(__file__)), 'README.md')))
             
     def checkUpdate(self):
         def compare(left, right):
@@ -891,7 +1029,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         if osp.isfile('version.txt'):
             os.remove('version.txt')
-        url= "https://raw.githubusercontent.com/LilactheGreat/versioncheck/master/version.txt"
+        url= "https://raw.githubusercontent.com/LilactheGreat/labelme/master/version.txt"
         os.system("curl " + url + " > version.txt")
         with open("version.txt", 'r', encoding='utf-8') as f:
             newversion = f.read()
@@ -918,6 +1056,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.cross = True
         elif self.actions.crossHair.isChecked() == False:
             self.canvas.cross = False
+            
+    def immersiveMode(self):
+        # Prevent user from toggle mode while creating polygon
+        if self.canvas.immersive_ok:
+            if self.actions.hideOthers.isChecked() == True:
+                self.actions.hideOthers.setChecked(False)
+            elif self.actions.hideOthers.isChecked() == False:
+                self.actions.hideOthers.setChecked(True)
+        elif not self.canvas.immersive_ok:
+            if self.actions.hideOthers.isChecked() == True:
+                self.canvas.immersive = True
+            elif self.actions.hideOthers.isChecked() == False:
+                self.canvas.immersive = False
     
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
@@ -984,7 +1135,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(False)
             else:
                 raise ValueError('Unsupported createMode: %s' % createMode)
-        self.actions.editMode.setEnabled(not edit)
+        self.actions.editMode.setEnabled(not edit)  
 
     def setEditMode(self):
         self.toggleDrawMode(True)
@@ -1346,6 +1497,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()
+            if self.actions.hideOthers.isChecked() == True:
+                self.canvas.keyboard_con()
+                self.canvas.immersive_first = True
+            self.canvas.immersive_ok = False
         else:
             self.canvas.undoLastLine()
             self.canvas.shapesBackups.pop()
@@ -1368,13 +1523,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_values[self.filename] = (self.zoomMode, value)
 
     def addZoom(self, increment=1.1):
+        self.setZoom(self.zoomWidget.value() * increment)
         zoom_value = self.zoomWidget.value() * increment
         if increment > 1:
             zoom_value = math.ceil(zoom_value)
         else:
             zoom_value = math.floor(zoom_value)
         self.setZoom(zoom_value)
-
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
         units = 1.1
@@ -1434,9 +1589,13 @@ class MainWindow(QtWidgets.QMainWindow):
         contrast = dialog.slider_contrast.value()
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
 
-    def togglePolygons(self, value):
-        for item in self.labelList:
-            item.setCheckState(Qt.Checked if value else Qt.Unchecked)
+    def togglePolygons(self, mode, value):
+        if mode == 0:
+            for item in self.labelList:
+                item.setCheckState(Qt.Checked if not self.actions.showAll.isChecked() else Qt.Unchecked)
+        elif mode == 1:
+            for item in self.labelList:
+                item.setCheckState(Qt.Checked if not value else Qt.Unchecked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""

@@ -39,7 +39,7 @@ def get_install_requires():
         'pynput',
         "colorama",
         "requests",
-        "PyQt5>=5.15.0",
+        "PyQt5>=5.12.0",
     ]
 
     # Find python binding for qt with priority:

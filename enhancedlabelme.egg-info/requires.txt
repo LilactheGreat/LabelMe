@@ -9,4 +9,4 @@ QDarkStyle>=2.8.1
 pynput
 colorama
 requests
-PyQt5>=5.15.0
+PyQt5>=5.12.0
