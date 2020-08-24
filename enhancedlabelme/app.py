@@ -252,9 +252,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.shape_dock.setObjectName('Labels')
         self.shape_dock.setWidget(self.labelList)
 
-
-
-
         self.uniqLabelList = UniqueLabelQListWidget()
         self.uniqLabelList.setToolTip(self.tr(
             "Select label to start annotating for it. "
