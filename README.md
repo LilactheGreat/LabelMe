@@ -4,7 +4,7 @@ This is the revised LabelMe based on 4.1.1 version
 
 [![Downloads](https://pepy.tech/badge/enhancedlabelme)](https://pepy.tech/project/enhancedlabelme)
 
-[![pypi version](https://img.shields.io/pypi/v/spyder.svg)](https://pypi.org/project/enhancedlabelme/)
+[![PyPI version](https://badge.fury.io/py/enhancedlabelme.svg)](https://badge.fury.io/py/enhancedlabelme)
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/LilactheGreat/labelme/master?filepath=labelme)
 
