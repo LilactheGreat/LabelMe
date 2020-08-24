@@ -42,14 +42,14 @@ class Canvas(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop('epsilon', 10.0)
         self.double_click = kwargs.pop('double_click', 'None')
-        self.cross_onoff = kwargs.pop('cross_hair')
-        self.cross_temp = 0
-        self.hide_others = kwargs.pop('hide_others')
         if self.double_click not in [None, 'close']:
             raise ValueError(
                 'Unexpected value for double_click event: {}'
                 .format(self.double_click)
             )
+        self.cross_onoff = kwargs.pop('cross_hair')
+        self.cross_temp = 0
+        self.hide_others = kwargs.pop('hide_others')
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -94,10 +94,6 @@ class Canvas(QtWidgets.QWidget):
         self.penStyle = QtCore.Qt.DashLine
         self.penThickness = 1.0
         self.penColor = QtCore.Qt.black
-        # if self.hide_others == True:
-        #     self.immersive = self.hide_others
-        # else:
-            # self.immersive = False
         self.immersive = False
         self.immersive_first = True
         self.immersive_ok = False
@@ -385,15 +381,16 @@ class Canvas(QtWidgets.QWidget):
             pos = self.transformPos(ev.posF())
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
-                # self.immersive_ok = True
-                if self.hide_others:
-                    # self.keyboard_con()
-                    self.hide_others = False
-                    self.immersive = True
-                if self.immersive and self.immersive_first:
-                    self.immersive_ok = True
+                if len(self.shapes) != 0:
+                    if self.hide_others:
+                        self.hide_others = False
+                        self.immersive = True
+                    if self.immersive and self.immersive_first:
+                        self.immersive_ok = True
+                        self.keyboard_con()
+                        self.immersive_first = False
+                else:
                     self.keyboard_con()
-                    self.immersive_first = False
                 if self.current:
                     # Add point to existing shape.
                     if self.createMode == 'polygon':
