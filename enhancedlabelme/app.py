@@ -10,6 +10,7 @@ import requests
 import math
 import imgviz
 import sys
+from distutils.version import StrictVersion
 
 from qtpy import QtCore
 from qtpy.QtCore import Qt
@@ -1025,26 +1026,27 @@ class MainWindow(QtWidgets.QMainWindow):
             subprocess.call(('xdg-open', osp.join(osp.dirname(osp.realpath(__file__)), 'README.md')))
             
     def checkUpdate(self):
-        def compare(left, right):
-            left_vars = map(int, left.split('.'))
-            right_vars = map(int, right.split('.'))
-            for a, b in zip_longest(left_vars, right_vars, fillvalue = 0):
-                if a > b:
-                    return '>'
-                elif a < b:
-                    return '<'
-            return '='
+        # def compare(left, right):
+        #     left_vars = map(int, left.split('.'))
+        #     right_vars = map(int, right.split('.'))
+        #     for a, b in zip_longest(left_vars, right_vars, fillvalue = 0):
+        #         if a > b:
+        #             return '>'
+        #         elif a < b:
+        #             return '<'
+        #     return '='
         
         if osp.isfile('version.txt'):
             os.remove('version.txt')
         url= "https://raw.githubusercontent.com/LilactheGreat/labelme/master/version.txt"
         os.system("curl " + url + " > version.txt")
         with open("version.txt", 'r', encoding='utf-8') as f:
-            newversion = f.read()
-        if compare(newversion[0], __version__) == '<':
+            newversion = f.readlines()
+        # if compare(newversion[0], __version__) == '<':
+        if StrictVersion(__version__) < StrictVersion(str(newversion[0])):
             buttonReply = QtWidgets.QMessageBox.question(
                 self, 'Checking Version', '\nLatest Version : %s\nCurrent Version : %s\n%s'%(
-                    str(newversion), __version__, 'Newer version is available. Wanna update now?'),
+                    newversion[0], __version__, 'Newer version is available. Wanna update now?'),
                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
             if buttonReply == QtWidgets.QMessageBox.Yes:
                 self.close()
@@ -1054,8 +1056,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 sys.exit(self.reload())
         else:
             return QtWidgets.QMessageBox.about(
-                self, 'Checking Version', '\nCurrent Version : %s\nLatest Version : %s\n%s'%(
-                    __version__, str(newversion), 'No available update'))
+                self, 'Checking Version', '\nLatest Version : %sCurrent Version : %s\n%s'%(
+                    newversion[0], __version__, 'No new version is available'))
         
     def darkModeToggle(self):
         app = QtWidgets.QApplication.instance()
