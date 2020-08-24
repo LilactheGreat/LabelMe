@@ -8,6 +8,7 @@ This is the revised LabelMe based on 4.1.1 version
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FLilactheGreat%2Flabelme&count_bg=%2379C83D&title_bg=%23555555&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 ![GitHub Releases](https://img.shields.io/github/downloads/LilactheGreat/labelme/latest/total)
+![GitHub All Releases](https://img.shields.io/github/downloads/LilactheGreat/labelme/total?style=plastic)
 
 [![GitHub issues](https://img.shields.io/github/issues/LilactheGreat/labelme)](https://github.com/LilactheGreat/labelme/issues)
 [![GitHub forks](https://img.shields.io/github/forks/LilactheGreat/labelme)](https://github.com/LilactheGreat/labelme/network)
