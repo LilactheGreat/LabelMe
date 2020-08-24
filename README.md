@@ -1,6 +1,8 @@
 EnhancedLabelMe
 
-This is the revised LabelMe based on 4.1.1 version
+This is the revised LabelMe based on 4.1.1 version by wkentaro
+
+[![Downloads](https://pepy.tech/badge/enhancedlabelme)](https://pepy.tech/project/enhancedlabelme)
 
 <installtion>
 1.
