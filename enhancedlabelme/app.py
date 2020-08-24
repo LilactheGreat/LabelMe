@@ -1007,7 +1007,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def reload(self):
         self.close()
         fn = osp.join(osp.dirname(osp.realpath(__file__)), '__main__.py')
-        sys.exit(os.execl(sys.executable, sys.executable, *sys.argv))
+        if platform.system() == 'Windows':    # Windows
+            subprocess.check_call([sys.executable, "labelme+"])
+        else:
+            sys.exit(os.execl(sys.executable, sys.executable, *sys.argv))
     
     def about(self):
         return QtWidgets.QMessageBox.about(
@@ -1026,23 +1029,12 @@ class MainWindow(QtWidgets.QMainWindow):
             subprocess.call(('xdg-open', osp.join(osp.dirname(osp.realpath(__file__)), 'README.md')))
             
     def checkUpdate(self):
-        # def compare(left, right):
-        #     left_vars = map(int, left.split('.'))
-        #     right_vars = map(int, right.split('.'))
-        #     for a, b in zip_longest(left_vars, right_vars, fillvalue = 0):
-        #         if a > b:
-        #             return '>'
-        #         elif a < b:
-        #             return '<'
-        #     return '='
-        
         if osp.isfile('version.txt'):
             os.remove('version.txt')
         url= "https://raw.githubusercontent.com/LilactheGreat/labelme/master/version.txt"
         os.system("curl " + url + " > version.txt")
         with open("version.txt", 'r', encoding='utf-8') as f:
             newversion = f.readlines()
-        # if compare(newversion[0], __version__) == '<':
         if StrictVersion(__version__) < StrictVersion(str(newversion[0])):
             buttonReply = QtWidgets.QMessageBox.question(
                 self, 'Checking Version', '\nLatest Version : %s\nCurrent Version : %s\n%s'%(
