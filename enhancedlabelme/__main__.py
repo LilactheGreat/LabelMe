@@ -194,12 +194,14 @@ def main():
         osp.dirname(osp.abspath(__file__)) + '/translate'
     )
     
-    # Application will be scaled based on dpi of screen
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    try:
+        # Application will be scaled based on dpi of screen
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    except Exception:
+        pass
     
     app = QtWidgets.QApplication(sys.argv)
-    # app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon('icon'))
     app.installTranslator(translator)

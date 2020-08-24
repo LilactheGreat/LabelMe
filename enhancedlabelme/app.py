@@ -1029,7 +1029,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         if osp.isfile('version.txt'):
             os.remove('version.txt')
-        url= "https://raw.githubusercontent.com/LilactheGreat/versioncheck/master/version.txt"
+        url= "https://raw.githubusercontent.com/LilactheGreat/labelme/master/version.txt"
         os.system("curl " + url + " > version.txt")
         with open("version.txt", 'r', encoding='utf-8') as f:
             newversion = f.read()

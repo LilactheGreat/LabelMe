@@ -104,7 +104,6 @@ v1.5
 v1.6
 - You can not toggle immersive mode while creating polygon anymore to prevent unexpected error
 - Now the labelme application will be scaled based on the dpi of your screen
-  (4K User is always welcome)
 
 * To Do
 - drag & drop folder
