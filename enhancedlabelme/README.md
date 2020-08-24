@@ -110,7 +110,10 @@ v1.6
 - Added restart button to apply changes in config faster (file - restart)
 - You can now update enhancedlabelme within application (help - check update)
 
-* To Do
+v1.7
+- Fixed immersive mode config
+
+<To Do>
 - drag & drop folder
 - Enable deleting elements from label list
 - Use Qimage instead of Qpainter/QPixmap

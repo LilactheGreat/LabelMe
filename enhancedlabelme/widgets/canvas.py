@@ -94,6 +94,10 @@ class Canvas(QtWidgets.QWidget):
         self.penStyle = QtCore.Qt.DashLine
         self.penThickness = 1.0
         self.penColor = QtCore.Qt.black
+        # if self.hide_others == True:
+        #     self.immersive = self.hide_others
+        # else:
+            # self.immersive = False
         self.immersive = False
         self.immersive_first = True
         self.immersive_ok = False
@@ -381,11 +385,13 @@ class Canvas(QtWidgets.QWidget):
             pos = self.transformPos(ev.posF())
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
-                self.immersive_ok = True
+                # self.immersive_ok = True
                 if self.hide_others:
-                    self.keyboard_con()
+                    # self.keyboard_con()
                     self.hide_others = False
+                    self.immersive = True
                 if self.immersive and self.immersive_first:
+                    self.immersive_ok = True
                     self.keyboard_con()
                     self.immersive_first = False
                 if self.current:
@@ -767,11 +773,13 @@ class Canvas(QtWidgets.QWidget):
             if self.immersive:
                 self.keyboard_con()
                 self.immersive_first = True
+                self.immersive_ok = False
             self.current = None
             self.drawingPolygon.emit(False)
             self.update()
         elif key == QtCore.Qt.Key_Return and self.canCloseShape():
             self.finalise()
+
 
     def setLastLabel(self, text, flags):
         assert text

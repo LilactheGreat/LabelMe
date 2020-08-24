@@ -339,8 +339,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shortcuts = self._config['shortcuts']
         quit = action(self.tr('&Quit'), self.close, shortcuts['quit'], 'quit',
                       self.tr('Quit application'))
-        restart = action(self.tr('&Restart'), self.reload, 'restart',
-                self.tr('Restart application'))
+        restart = action(text=self.tr('&Restart'), slot=self.reload, icon='restart',
+                tip=self.tr('Restart application'))
         open_ = action(self.tr('&Open'),
                        self.openFile,
                        shortcuts['open'],
@@ -507,10 +507,10 @@ class MainWindow(QtWidgets.QMainWindow):
                          icon='eye', tip=self.tr('Show all polygons'),
                          enabled=True)
 
-        hideOthers = action(self.tr('&Immersive mode'),
-                            self.immersiveMode,
+        hideOthers = action(text=self.tr('&Immersive mode'),
+                            slot=self.immersiveMode,
                             icon='focus', tip=self.tr('Hide other polygons when creating polygon'),
-                            checkable=True, checked=self._config['hide_others'], enabled=True)
+                            checkable=True, enabled=True)
         hideOthers.setChecked(self._config['hide_others'])
         
         help = action(self.tr('&About'), self.about, icon='help',
@@ -1071,14 +1071,18 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.canvas.immersive_ok:
             if self.actions.hideOthers.isChecked() == True:
                 self.actions.hideOthers.setChecked(False)
+                self.canvas.immersive = False
             elif self.actions.hideOthers.isChecked() == False:
                 self.actions.hideOthers.setChecked(True)
-        elif not self.canvas.immersive_ok:
+                self.canvas.immersive = True
+        elif self.canvas.immersive_ok == False:
             if self.actions.hideOthers.isChecked() == True:
+                self.actions.hideOthers.setChecked(True)
                 self.canvas.immersive = True
             elif self.actions.hideOthers.isChecked() == False:
+                self.actions.hideOthers.setChecked(False)
                 self.canvas.immersive = False
-    
+        
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
 
@@ -1509,7 +1513,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.actions.hideOthers.isChecked() == True:
                 self.canvas.keyboard_con()
                 self.canvas.immersive_first = True
-            self.canvas.immersive_ok = False
+                self.canvas.immersive_ok = False
         else:
             self.canvas.undoLastLine()
             self.canvas.shapesBackups.pop()
