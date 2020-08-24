@@ -126,10 +126,8 @@ v1.6
 v1.7
 - Fixed immersive mode config
 
-<To Do>
-- drag & drop folder
-- Enable deleting elements from label list
-- Use Qimage instead of Qpainter/QPixmap
+
+
 
 
 @misc{labelme2016,
