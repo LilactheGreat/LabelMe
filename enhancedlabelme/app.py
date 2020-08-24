@@ -296,6 +296,7 @@ class MainWindow(QtWidgets.QMainWindow):
             epsilon=self._config['epsilon'],
             double_click=self._config['canvas']['double_click'],
             cross_hair=self._config['cross_hair'],
+            hide_others=self._config['hide_others'],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -337,6 +338,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shortcuts = self._config['shortcuts']
         quit = action(self.tr('&Quit'), self.close, shortcuts['quit'], 'quit',
                       self.tr('Quit application'))
+        restart = action(self.tr('&Restart'), self.reload, 'restart',
+                self.tr('Restart application'))
         open_ = action(self.tr('&Open'),
                        self.openFile,
                        shortcuts['open'],
@@ -640,7 +643,7 @@ class MainWindow(QtWidgets.QMainWindow):
             brightnessContrast=brightnessContrast,
             zoomActions=zoomActions,
             openNextImg=openNextImg, openPrevImg=openPrevImg,
-            fileMenuActions=(open_, opendir, save, saveAs, close, quit),
+            fileMenuActions=(open_, opendir, save, saveAs, close, restart, quit),
             tool=(),
             crossHair=crossHair,
             crossStyle=crossStyle,
@@ -723,6 +726,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 prefer,
                 None,
+                restart,
                 quit,
             ),
         )
@@ -991,14 +995,19 @@ class MainWindow(QtWidgets.QMainWindow):
     def preference(self):
         try:
             if platform.system() == 'Darwin':       # macOS
-                subprocess.call(('open', osp.join(osp.expanduser('~'), 'lconfig')))
+                subprocess.call(('open', osp.join(osp.dirname(osp.realpath(__file__)), 'config/config')))
             elif platform.system() == 'Windows':    # Windows
-                subprocess.call(('notepad.exe', osp.join(osp.expanduser('~'), 'lconfig')))
+                subprocess.call(('notepad.exe', osp.join(osp.dirname(osp.realpath(__file__)), 'config/config')))
             else:                                   # linux variants
-                subprocess.call(('xdg-open', osp.join(osp.expanduser('~'), 'lconfig')))
+                subprocess.call(('xdg-open', osp.join(osp.dirname(osp.realpath(__file__)), 'config/config'))   )
         except Exception:
             pass
 
+    def reload(self):
+        self.close()
+        fn = osp.join(osp.dirname(osp.realpath(__file__)), '__main__.py')
+        sys.exit(os.execl(sys.executable, sys.executable, *sys.argv))
+    
     def about(self):
         return QtWidgets.QMessageBox.about(
             self, 'About', '\n<Version %s>\n%s'%(__version__, "Modified by LilactheGreat"))
@@ -1008,7 +1017,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.canvas.penStyle, self.canvas.penThickness, self.canvas.penColor = psw.saveSettings(self)
         
     def readme(self):
-        import platform, subprocess
         if platform.system() == 'Darwin':       # macOS
             subprocess.call(('open', osp.join(osp.dirname(osp.realpath(__file__)), 'README.md')))
         elif platform.system() == 'Windows':    # Windows
@@ -1033,10 +1041,17 @@ class MainWindow(QtWidgets.QMainWindow):
         os.system("curl " + url + " > version.txt")
         with open("version.txt", 'r', encoding='utf-8') as f:
             newversion = f.read()
-        if compare(newversion[0], __version__) == '>':
-            return QtWidgets.QMessageBox.about(
-                self, 'Checking Version', '\nCurrent Version : %s\nLatest Version : %s\n%s'%(
-                    __version__, str(newversion), 'Newer version is available'))
+        if compare(newversion[0], __version__) == '<':
+            buttonReply = QtWidgets.QMessageBox.question(
+                self, 'Checking Version', '\nLatest Version : %s\nCurrent Version : %s\n%s'%(
+                    str(newversion), __version__, 'Newer version is available. Wanna update now?'),
+                 QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+            if buttonReply == QtWidgets.QMessageBox.Yes:
+                self.close()
+                # package = 'enhancedlabelme==%s'%(str(newversion[0]))
+                package = 'enhancedlabelme'
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", package])
+                sys.exit(self.reload())
         else:
             return QtWidgets.QMessageBox.about(
                 self, 'Checking Version', '\nCurrent Version : %s\nLatest Version : %s\n%s'%(

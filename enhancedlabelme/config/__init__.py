@@ -32,8 +32,9 @@ def get_default_config():
     with open(config_file) as f:
         config = yaml.safe_load(f)
 
-    # save default config to ~/lconfig
-    user_config_file = osp.join(osp.expanduser('~'), 'lconfig')
+    # save default config to config/config
+    user_config_file = osp.join(osp.dirname(osp.realpath(__file__)), 'config')
+    # user_config_file = osp.join(osp.expanduser('~'), 'lconfig')
     if not osp.exists(user_config_file):
         try:
             shutil.copy(config_file, user_config_file)

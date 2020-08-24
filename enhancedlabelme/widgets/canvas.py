@@ -44,6 +44,7 @@ class Canvas(QtWidgets.QWidget):
         self.double_click = kwargs.pop('double_click', 'None')
         self.cross_onoff = kwargs.pop('cross_hair')
         self.cross_temp = 0
+        self.hide_others = kwargs.pop('hide_others')
         if self.double_click not in [None, 'close']:
             raise ValueError(
                 'Unexpected value for double_click event: {}'
@@ -100,7 +101,7 @@ class Canvas(QtWidgets.QWidget):
         self.keyboard_key = pynput.keyboard.Key
 
 
-        fn = str(osp.join(osp.dirname(osp.realpath(__file__)), 'crossSave.txt'))
+        fn = osp.join(osp.dirname(osp.realpath(__file__)), 'crossSave.txt')
         # Load previous cross-line style
         if osp.isfile(fn) and self.firstLoad == False:
             with open(fn, 'r', encoding='utf-8') as f:
@@ -381,6 +382,9 @@ class Canvas(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 self.immersive_ok = True
+                if self.hide_others:
+                    self.keyboard_con()
+                    self.hide_others = False
                 if self.immersive and self.immersive_first:
                     self.keyboard_con()
                     self.immersive_first = False
@@ -618,6 +622,7 @@ class Canvas(QtWidgets.QWidget):
             if self.cross_onoff == True and self.cross_temp == 0:
                 self.cross_temp = 1
                 self.cross = True
+            
             try:
                 if self.cross == True and self.pixmap and self.dialog == False:
                     p.setPen(QtGui.QPen(self.penColor, self.penThickness, self.penStyle))

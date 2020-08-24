@@ -2,6 +2,8 @@ EnhancedLabelMe
 
 This is the revised LabelMe based on 4.1.1 version
 
+[![Downloads](https://pepy.tech/badge/enhancedlabelme)](https://pepy.tech/project/enhancedlabelme)
+
 <installtion>
 1.
 (Linux)
@@ -104,6 +106,9 @@ v1.5
 v1.6
 - You can not toggle immersive mode while creating polygon anymore to prevent unexpected error
 - Now the labelme application will be scaled based on the dpi of your screen
+  (4K User is always welcome)
+- Added restart button to apply changes in config faster (file - restart)
+- You can now update enhancedlabelme within application (help - check update)
 
 * To Do
 - drag & drop folder

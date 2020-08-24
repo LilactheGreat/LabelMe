@@ -50,7 +50,7 @@ def main():
         help='output file or directory (if it ends with .json it is '
              'recognized as file, else as directory)'
     )
-    default_config_file = os.path.join(os.path.expanduser('~'), 'lconfig')
+    default_config_file = osp.join(osp.dirname(osp.realpath(__file__)), 'config/config')
     parser.add_argument(
         '--config',
         dest='config',
@@ -177,7 +177,7 @@ def main():
     if not config['labels'] and config['validate_label']:
         logger.error('--labels must be specified with --validatelabel or '
                      'validate_label: true in the config file '
-                     '(ex. ~/lconfig).')
+                     '(ex. ~/config).')
         sys.exit(1)
 
     output_file = None
