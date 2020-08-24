@@ -6,6 +6,7 @@ This is the revised LabelMe based on 4.1.1 version
 [![GitHub version](https://badge.fury.io/gh/LilactheGreat%2Flabelme.svg)](https://badge.fury.io/gh/LilactheGreat%2Flabelme)
 [![PyPI version](https://badge.fury.io/py/enhancedlabelme.svg)](https://badge.fury.io/py/enhancedlabelme)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/LilactheGreat/labelme/master?filepath=labelme)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FLilactheGreat%2Flabelme&count_bg=%2379C83D&title_bg=%23555555&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 
 <installtion>
